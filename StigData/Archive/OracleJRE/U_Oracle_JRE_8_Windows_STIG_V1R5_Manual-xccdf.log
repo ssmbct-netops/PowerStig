@@ -1,0 +1,2 @@
+V-66957::*::HardCodedRule(FileContentRule)@{DscResource = 'KeyValuePairFile'; Key = 'deployment.user.security.exception.sites'; Value = $null; OrganizationValueTestString = 'Value = exception.sites file path '}
+V-66959::*::HardCodedRule(FileContentRule)@{DscResource = 'ReplaceText'; Key = $null; Value = $null; OrganizationValueTestString = 'Key = exception.sites file path; Value = comma separated URL strings '}

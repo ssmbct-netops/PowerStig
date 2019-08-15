@@ -1,4 +1,4 @@
-<DISASTIG version="1" classification="UNCLASSIFIED" customname="" stigid="JRE_8_and_Windows_STIG" description="The Java Runtime Environment (JRE) is a bundle developed and offered by Oracle Corporation which includes the Java Virtual Machine (JVM), class libraries, and other components necessary to run Java applications and applets.  Certain default settings within the JRE pose a security risk so it is necessary to deploy system wide properties to ensure a higher degree of security when utilizing the JRE.&#xA;" filename="U_Oracle_JRE_8_Windows_STIG_V1R5_Manual-xccdf.xml" releaseinfo="Release: 5 Benchmark Date: 26 Jan 2018" title="Java Runtime Environment (JRE) version 8 STIG for Windows" notice="terms-of-use" source="STIG.DOD.MIL" fullversion="1.5" created="7/19/2019">
+<DISASTIG version="1" classification="UNCLASSIFIED" customname="" stigid="JRE_8_and_Windows_STIG" description="The Java Runtime Environment (JRE) is a bundle developed and offered by Oracle Corporation which includes the Java Virtual Machine (JVM), class libraries, and other components necessary to run Java applications and applets.  Certain default settings within the JRE pose a security risk so it is necessary to deploy system wide properties to ensure a higher degree of security when utilizing the JRE.&#xA;" filename="U_Oracle_JRE_8_Windows_STIG_V1R5_Manual-xccdf.xml" releaseinfo="Release: 5 Benchmark Date: 26 Jan 2018" title="Java Runtime Environment (JRE) version 8 STIG for Windows" notice="terms-of-use" source="STIG.DOD.MIL" fullversion="1.5" created="8/15/2019">
   <FileContentRule dscresourcemodule="FileContentDsc">
     <Rule id="V-66723.a" severity="medium" conversionstatus="pass" title="SRG-APP-000516" dscresource="KeyValuePairFile">
       <Description>&lt;VulnDiscussion&gt;Certificates may be revoked due to improper issuance, compromise of the certificate, and failure to adhere to policy. Therefore, any certificate found revoked on a CRL or via Online Certificate Status Protocol (OCSP) should not be trusted. Permitting execution of an applet published with a revoked certificate may result in spoofing, malware, system modification, invasion of privacy, and denial of service.
@@ -188,6 +188,64 @@ Usage restrictions and implementation guidance apply to both the selection and u
       <RawString>If the key "deployment.security.blacklist.check.locked" is not present in the "deployment.properties" file, this is a finding.</RawString>
       <Value>true</Value>
     </Rule>
+    <Rule id="V-66957" severity="medium" conversionstatus="pass" title="SRG-APP-000386" dscresource="KeyValuePairFile">
+      <Description>&lt;VulnDiscussion&gt;Utilizing a whitelist provides a configuration management method for allowing the execution of only authorized software. Using only authorized software decreases risk by limiting the number of potential vulnerabilities.
+
+The organization must identify authorized software programs and permit execution of authorized software. The process used to identify software programs that are authorized to execute on organizational information systems is commonly referred to as whitelisting.
+
+Verification of whitelisted software can occur either prior to execution or at system startup.
+
+This requirement applies to configuration management applications or similar types of applications designed to manage system processes and configurations (e.g., HBSS and software wrappers).&lt;/VulnDiscussion&gt;&lt;FalsePositives&gt;&lt;/FalsePositives&gt;&lt;FalseNegatives&gt;&lt;/FalseNegatives&gt;&lt;Documentable&gt;false&lt;/Documentable&gt;&lt;Mitigations&gt;&lt;/Mitigations&gt;&lt;SeverityOverrideGuidance&gt;&lt;/SeverityOverrideGuidance&gt;&lt;PotentialImpacts&gt;&lt;/PotentialImpacts&gt;&lt;ThirdPartyTools&gt;&lt;/ThirdPartyTools&gt;&lt;MitigationControl&gt;&lt;/MitigationControl&gt;&lt;Responsibility&gt;&lt;/Responsibility&gt;&lt;IAControls&gt;&lt;/IAControls&gt;</Description>
+      <DuplicateOf />
+      <IsNullOrEmpty>False</IsNullOrEmpty>
+      <Key>deployment.user.security.exception.sites</Key>
+      <OrganizationValueRequired>True</OrganizationValueRequired>
+      <OrganizationValueTestString>Value = exception.sites file path </OrganizationValueTestString>
+      <RawString>Navigate to the system-level "deployment.properties" file for JRE.
+
+&lt;Windows Directory&gt;\Sun\Java\Deployment\deployment.properties
+- or -
+&lt;JRE Installation Directory&gt;\Lib\deployment.properties
+
+If the key "deployment.user.security.exception.sites" is not present in the "deployment.properties" file, this is a finding. 
+
+If the key "deployment.user.security.exception.sites" is not set to the location of the "exception.sites" file, this is a finding.
+
+An example of a correct setting is:
+deployment.user.security.exception.sites=C\:\\Windows\\Sun\\Java\\Deployment\\exception.sites</RawString>
+      <Value>
+      </Value>
+    </Rule>
+    <Rule id="V-66959" severity="medium" conversionstatus="pass" title="SRG-APP-000386" dscresource="ReplaceText">
+      <Description>&lt;VulnDiscussion&gt;Utilizing a whitelist provides a configuration management method for allowing the execution of only authorized software. Using only authorized software decreases risk by limiting the number of potential vulnerabilities.
+
+The organization must identify authorized software programs and permit execution of authorized software. The process used to identify software programs that are authorized to execute on organizational information systems is commonly referred to as whitelisting.
+
+Verification of whitelisted software can occur either prior to execution or at system startup.
+
+This requirement applies to configuration management applications or similar types of applications designed to manage system processes and configurations (e.g., HBSS and software wrappers).&lt;/VulnDiscussion&gt;&lt;FalsePositives&gt;&lt;/FalsePositives&gt;&lt;FalseNegatives&gt;&lt;/FalseNegatives&gt;&lt;Documentable&gt;false&lt;/Documentable&gt;&lt;Mitigations&gt;&lt;/Mitigations&gt;&lt;SeverityOverrideGuidance&gt;&lt;/SeverityOverrideGuidance&gt;&lt;PotentialImpacts&gt;&lt;/PotentialImpacts&gt;&lt;ThirdPartyTools&gt;&lt;/ThirdPartyTools&gt;&lt;MitigationControl&gt;&lt;/MitigationControl&gt;&lt;Responsibility&gt;&lt;/Responsibility&gt;&lt;IAControls&gt;&lt;/IAControls&gt;</Description>
+      <DuplicateOf />
+      <IsNullOrEmpty>False</IsNullOrEmpty>
+      <Key>
+      </Key>
+      <OrganizationValueRequired>True</OrganizationValueRequired>
+      <OrganizationValueTestString>Key = exception.sites file path; Value = comma separated URL strings </OrganizationValueTestString>
+      <RawString>If the system is on the SIPRNet, this requirement is NA.
+
+Navigate to the “exception.sites” file for Java:
+
+The location of the "exception.sites" file is defined in the deployment.properties file.
+
+The "exception.sites" file is a text file containing single-line URLs for accepted risk sites. If there are no AO approved sites to be added to the configuration, it is acceptable for this file to be blank.
+
+If the “exception.sites” file does not exist, this is a finding.
+
+If the “exception.sites” file contains URLs that are not AO approved, this is a finding.
+
+Note: DeploymentRuleSet.jar is an acceptable substitute for using exception.sites.  Interview the SA to view contents of the "DeploymentRuleSet.jar" file to ensure any AO approved sites are whitelisted.</RawString>
+      <Value>
+      </Value>
+    </Rule>
     <Rule id="V-66961.a" severity="medium" conversionstatus="pass" title="SRG-APP-000401" dscresource="KeyValuePairFile">
       <Description>&lt;VulnDiscussion&gt;A certificate revocation list is a directory which contains a list of certificates that have been revoked for various reasons. Certificates may be revoked due to improper issuance, compromise of the certificate, and failure to adhere to policy. Therefore, any certificate found on a CRL should not be trusted. Permitting execution of an applet published with a revoked certificate may result in spoofing, malware, system modification, invasion of privacy, and denial of service.&lt;/VulnDiscussion&gt;&lt;FalsePositives&gt;&lt;/FalsePositives&gt;&lt;FalseNegatives&gt;&lt;/FalseNegatives&gt;&lt;Documentable&gt;false&lt;/Documentable&gt;&lt;Mitigations&gt;&lt;/Mitigations&gt;&lt;SeverityOverrideGuidance&gt;&lt;/SeverityOverrideGuidance&gt;&lt;PotentialImpacts&gt;&lt;/PotentialImpacts&gt;&lt;ThirdPartyTools&gt;&lt;/ThirdPartyTools&gt;&lt;MitigationControl&gt;&lt;/MitigationControl&gt;&lt;Responsibility&gt;&lt;/Responsibility&gt;&lt;IAControls&gt;&lt;/IAControls&gt;</Description>
       <DuplicateOf />
@@ -270,57 +328,6 @@ If the "deployment.config" configuration file does not exist in either of these 
 The location of the "deployment.properties" file is defined in the "deployment.config" file.
 
 If there are no files titled "deployment.properties", this is a finding.</RawString>
-    </Rule>
-    <Rule id="V-66957" severity="medium" conversionstatus="pass" title="SRG-APP-000386" dscresource="None">
-      <Description>&lt;VulnDiscussion&gt;Utilizing a whitelist provides a configuration management method for allowing the execution of only authorized software. Using only authorized software decreases risk by limiting the number of potential vulnerabilities.
-
-The organization must identify authorized software programs and permit execution of authorized software. The process used to identify software programs that are authorized to execute on organizational information systems is commonly referred to as whitelisting.
-
-Verification of whitelisted software can occur either prior to execution or at system startup.
-
-This requirement applies to configuration management applications or similar types of applications designed to manage system processes and configurations (e.g., HBSS and software wrappers).&lt;/VulnDiscussion&gt;&lt;FalsePositives&gt;&lt;/FalsePositives&gt;&lt;FalseNegatives&gt;&lt;/FalseNegatives&gt;&lt;Documentable&gt;false&lt;/Documentable&gt;&lt;Mitigations&gt;&lt;/Mitigations&gt;&lt;SeverityOverrideGuidance&gt;&lt;/SeverityOverrideGuidance&gt;&lt;PotentialImpacts&gt;&lt;/PotentialImpacts&gt;&lt;ThirdPartyTools&gt;&lt;/ThirdPartyTools&gt;&lt;MitigationControl&gt;&lt;/MitigationControl&gt;&lt;Responsibility&gt;&lt;/Responsibility&gt;&lt;IAControls&gt;&lt;/IAControls&gt;</Description>
-      <DuplicateOf />
-      <IsNullOrEmpty>False</IsNullOrEmpty>
-      <OrganizationValueRequired>False</OrganizationValueRequired>
-      <OrganizationValueTestString />
-      <RawString>Navigate to the system-level "deployment.properties" file for JRE.
-
-&lt;Windows Directory&gt;\Sun\Java\Deployment\deployment.properties
-- or -
-&lt;JRE Installation Directory&gt;\Lib\deployment.properties
-
-If the key "deployment.user.security.exception.sites" is not present in the "deployment.properties" file, this is a finding. 
-
-If the key "deployment.user.security.exception.sites" is not set to the location of the "exception.sites" file, this is a finding.
-
-An example of a correct setting is:
-deployment.user.security.exception.sites=C\:\\Windows\\Sun\\Java\\Deployment\\exception.sites</RawString>
-    </Rule>
-    <Rule id="V-66959" severity="medium" conversionstatus="pass" title="SRG-APP-000386" dscresource="None">
-      <Description>&lt;VulnDiscussion&gt;Utilizing a whitelist provides a configuration management method for allowing the execution of only authorized software. Using only authorized software decreases risk by limiting the number of potential vulnerabilities.
-
-The organization must identify authorized software programs and permit execution of authorized software. The process used to identify software programs that are authorized to execute on organizational information systems is commonly referred to as whitelisting.
-
-Verification of whitelisted software can occur either prior to execution or at system startup.
-
-This requirement applies to configuration management applications or similar types of applications designed to manage system processes and configurations (e.g., HBSS and software wrappers).&lt;/VulnDiscussion&gt;&lt;FalsePositives&gt;&lt;/FalsePositives&gt;&lt;FalseNegatives&gt;&lt;/FalseNegatives&gt;&lt;Documentable&gt;false&lt;/Documentable&gt;&lt;Mitigations&gt;&lt;/Mitigations&gt;&lt;SeverityOverrideGuidance&gt;&lt;/SeverityOverrideGuidance&gt;&lt;PotentialImpacts&gt;&lt;/PotentialImpacts&gt;&lt;ThirdPartyTools&gt;&lt;/ThirdPartyTools&gt;&lt;MitigationControl&gt;&lt;/MitigationControl&gt;&lt;Responsibility&gt;&lt;/Responsibility&gt;&lt;IAControls&gt;&lt;/IAControls&gt;</Description>
-      <DuplicateOf />
-      <IsNullOrEmpty>False</IsNullOrEmpty>
-      <OrganizationValueRequired>False</OrganizationValueRequired>
-      <OrganizationValueTestString />
-      <RawString>If the system is on the SIPRNet, this requirement is NA.
-
-Navigate to the “exception.sites” file for Java:
-
-The location of the "exception.sites" file is defined in the deployment.properties file.
-
-The "exception.sites" file is a text file containing single-line URLs for accepted risk sites. If there are no AO approved sites to be added to the configuration, it is acceptable for this file to be blank.
-
-If the “exception.sites” file does not exist, this is a finding.
-
-If the “exception.sites” file contains URLs that are not AO approved, this is a finding.
-
-Note: DeploymentRuleSet.jar is an acceptable substitute for using exception.sites.  Interview the SA to view contents of the "DeploymentRuleSet.jar" file to ensure any AO approved sites are whitelisted.</RawString>
     </Rule>
     <Rule id="V-66965" severity="medium" conversionstatus="pass" title="SRG-APP-000454" dscresource="None">
       <Description>&lt;VulnDiscussion&gt;Previous versions of software components that are not removed from the information system after updates have been installed may be exploited by adversaries. Some information technology products may remove older versions of software automatically from the information system.&lt;/VulnDiscussion&gt;&lt;FalsePositives&gt;&lt;/FalsePositives&gt;&lt;FalseNegatives&gt;&lt;/FalseNegatives&gt;&lt;Documentable&gt;false&lt;/Documentable&gt;&lt;Mitigations&gt;&lt;/Mitigations&gt;&lt;SeverityOverrideGuidance&gt;&lt;/SeverityOverrideGuidance&gt;&lt;PotentialImpacts&gt;&lt;/PotentialImpacts&gt;&lt;ThirdPartyTools&gt;&lt;/ThirdPartyTools&gt;&lt;MitigationControl&gt;&lt;/MitigationControl&gt;&lt;Responsibility&gt;&lt;/Responsibility&gt;&lt;IAControls&gt;&lt;/IAControls&gt;</Description>

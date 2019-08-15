@@ -5,4 +5,9 @@
     Each setting in this file is linked by STIG ID and the valid range is in an
     associated comment.
 -->
-<OrganizationalSettings fullversion="1.5" />
+<OrganizationalSettings fullversion="1.5">
+  <!-- Ensure Value = exception.sites file path -->
+  <OrganizationalSetting id="V-66957" Value="" />
+  <!-- Ensure Key = exception.sites file path; Value = comma separated URL strings -->
+  <OrganizationalSetting id="V-66959" Key="" Value="" />
+</OrganizationalSettings>

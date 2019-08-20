@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+* Updated logfile in Oracle JRE STIG leveraging HardCodedRule to automate additional STIG rules. [#481](https://github.com/microsoft/PowerStig/issues/481)
 * Update PowerSTIG to automate applying the IIS 8.5 STIG, Version 1 Release 8. [#469](https://github.com/microsoft/PowerStig/issues/469)
 * Fixed [#476](https://github.com/microsoft/PowerStig/issues/476): AuditSetting Rule for Windows STIGs has an incorrect operator when evaluating Service Pack information
 * Added support for Dot Net Framework 4.0 STIG, Version 1, Release 8 [#447](https://github.com/microsoft/PowerStig/issues/447)

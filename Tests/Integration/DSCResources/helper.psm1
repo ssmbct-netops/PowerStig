@@ -80,6 +80,10 @@ function Get-ResourceMatchStatement
         {
             return '\[KeyValuePairFile\]'
         }
+        'SharePointRule'
+        {
+            return '\[SharePoint\]'
+        }
         'SqlScriptQueryRule'
         {
             return '\[SqlScriptQuery\]'

@@ -199,8 +199,8 @@ class ConvertFactory
             }
             {[SharePointRuleConvert]::Match($PSItem)}
             {
-                $null = $ruleTypeList.AddRange(
-                    [SplitFactory]::XccdfRule($Rule, 'SharePointRuleConvert')
+                $null = $ruleTypeList.Add(
+                    [SharePointRuleConvert]::new($Rule).AsRule()
                 )
             }
             {[SqlScriptQueryRuleConvert]::Match($PSItem)}

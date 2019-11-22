@@ -9,6 +9,7 @@
 * Update PowerSTIG to successfully parse Mozilla Firefox STIG - Ver 4, Rel 27: [#540](https://github.com/microsoft/PowerStig/issues/540)
 * Update PowerSTIG to successfully parse Microsoft Windows 10 STIG - Ver 1, Rel 19: [533](https://github.com/microsoft/PowerStig/issues/533)
 * Update PowerSTIG to parse/convert the Windows Server 2012 R2 MS/DC V2R17/V2R18 Respectively: [531](https://github.com/microsoft/PowerStig/issues/531)
+* Added SharePointDSC composite resource
 
 ## 4.1.1
 

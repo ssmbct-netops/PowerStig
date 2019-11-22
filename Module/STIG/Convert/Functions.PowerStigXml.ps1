@@ -680,6 +680,11 @@ function Split-BenchmarkId
             $returnId = 'DotNetFramework_4'
             continue
         }
+        {$PSItem -match 'SharePoint'}
+        {
+            $returnId = 'SharePoint'
+            continue
+        }
         default
         {
             $returnId = $id

@@ -224,6 +224,14 @@ try
                     'TechnologyRole'    = $null
                 }
             )
+            'SharePoint' = @(
+                @{
+                    'id' = 'SharePoint'
+                    'Technology'        = 'SharePoint'
+                    'TechnologyVersion' = 'SharePoint2013'
+                    'TechnologyRole'    = $null
+                }
+            )
         }
         foreach ($sampleString in $sampleStrings.GetEnumerator())
         {

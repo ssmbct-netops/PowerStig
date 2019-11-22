@@ -197,6 +197,12 @@ class ConvertFactory
                     [SplitFactory]::XccdfRule($Rule, 'ServiceRuleConvert', 'ServiceName')
                 )
             }
+            {[SharePointRuleConvert]::Match($PSItem)}
+            {
+                $null = $ruleTypeList.AddRange(
+                    [SplitFactory]::XccdfRule($Rule, 'SharePointRuleConvert')
+                )
+            }
             {[SqlScriptQueryRuleConvert]::Match($PSItem)}
             {
                 $null = $ruleTypeList.Add(

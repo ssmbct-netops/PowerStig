@@ -178,7 +178,7 @@ Class SharePointRuleConvert : SharePointRule
         {
             if ($global:stigTitle -match "Server")
             {
-                $this.DscResource = 'xSharePoint'
+                $this.DscResource = 'SharePointDsc'
             }
             else
             {
@@ -195,12 +195,7 @@ Class SharePointRuleConvert : SharePointRule
     {
         if
         (
-            $CheckContent -Match 'Logging' -and
-            $CheckContent -Match 'IIS 8\.5' -and
-            $CheckContent -NotMatch 'review source IP' -and
-            $CheckContent -NotMatch 'verify only authorized groups' -and
-            $CheckContent -NotMatch 'Confirm|Consult with the System Administrator' -and
-            $CheckContent -Notmatch 'If an account associated with roles other than auditors'
+            $CheckContent -Match 'SharePoint'
         )
         {
             return $true

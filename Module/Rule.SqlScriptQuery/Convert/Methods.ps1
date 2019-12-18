@@ -516,7 +516,7 @@ function Get-AuditEvents
         $auditEvents = $line | Select-String -Pattern $pattern -AllMatches
         foreach ($auditEvent in $auditEvents.Matches)
         {
-            $collection += $auditEvent
+            $collection += "'" + $auditEvent + "'"
         }
     }
     # Return an array of found SQL audit events

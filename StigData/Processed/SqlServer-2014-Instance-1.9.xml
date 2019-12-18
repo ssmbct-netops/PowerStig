@@ -1289,6 +1289,42 @@ Note 2: Tips for adding a service SID/virtual account to a folder's permission l
 8) Click OK
 9) Permission like a normal user from here</RawString>
     </Rule>
+    <Rule id="V-67807" severity="medium" conversionstatus="pass" title="SRG-APP-000133-DB-000179" dscresource="None">
+      <Description>&lt;VulnDiscussion&gt;When dealing with change control issues, it should be noted, any changes to the hardware, software, and/or firmware components of applications and tools related to SQL Server can potentially have significant effects on the overall security of the system. Only qualified and authorized individuals shall be allowed to obtain access to components related to SQL Server for purposes of initiating changes, including upgrades and modifications.
+
+Unmanaged changes that occur to the software libraries or configuration can lead to unauthorized or compromised installations.
+
+Of particular note in this context is that any software installed for auditing and/or audit file management must be protected and monitored.&lt;/VulnDiscussion&gt;&lt;FalsePositives&gt;&lt;/FalsePositives&gt;&lt;FalseNegatives&gt;&lt;/FalseNegatives&gt;&lt;Documentable&gt;false&lt;/Documentable&gt;&lt;Mitigations&gt;&lt;/Mitigations&gt;&lt;SeverityOverrideGuidance&gt;&lt;/SeverityOverrideGuidance&gt;&lt;PotentialImpacts&gt;&lt;/PotentialImpacts&gt;&lt;ThirdPartyTools&gt;&lt;/ThirdPartyTools&gt;&lt;MitigationControl&gt;&lt;/MitigationControl&gt;&lt;Responsibility&gt;&lt;/Responsibility&gt;&lt;IAControls&gt;&lt;/IAControls&gt;</Description>
+      <DuplicateOf />
+      <IsNullOrEmpty>False</IsNullOrEmpty>
+      <OrganizationValueRequired>False</OrganizationValueRequired>
+      <OrganizationValueTestString />
+      <RawString>Verify that files and folders that are part of, or related to, the SQL Server 2014 installation have only the appropriate privileges. In Windows Explorer, right-click the file/folder, click Properties. On the Security tab, modify the security permissions, so that at most the following permissions are present:
+Trusted Installer (Full Control)
+SYSTEM (Full Control)
+Administrators (Full Control) [See Note 1]
+Users (Read, List Folder Contents, Read &amp; Execute)
+Creator Owner (Special Permissions - Full control - Subfolders and files only)
+All Application Packages (Read &amp; Execute) [Only as needed - see Note 2] 
+
+If any less restrictive permissions are present (and not specifically justified and approved), this is a finding.
+
+Verify that files and folders that are part of, or related to, the SQL Server 2014 installation have auditing enabled. Right-click on the file/folder, click Properties. On the Security tab, click Advanced. On the Auditing tab, verify that the following is set up on at least one audit:
+Type: All
+Principal: Everyone
+Access: Modify
+Applies to: This Folder, subfolder, and files [where applicable]
+
+If the required audit settings are not configured, there is a risk that unauthorized changes to the software will go undetected, and this is a finding.
+
+If a third-party security and data integrity tool is not used for monitoring and alerting files and folders based on cryptographic hashes, this is a finding.
+
+If the tool does not verify files/folder locations as listed in the documentation, this is a finding.
+
+Note 1: In the interest of separation of responsibilities with least privilege, consider granting Full Control only to SQL Database Administrators (or another appropriate group of administrators) and providing the local Administrators group with Read access only.
+
+Note 2: Some files also require 'ALL APPLICATION PACKAGES (READ, EXECUTE)' permissions for certain functionality to work appropriately, and this is considered acceptable where those permissions are required. (All SQL Server files that require this access reside by default in the ..\Microsoft SQL Server\110\ directory.)</RawString>
+    </Rule>
     <Rule id="V-67813" severity="low" conversionstatus="pass" title="SRG-APP-000133-DB-000199" dscresource="None">
       <Description>&lt;VulnDiscussion&gt;When dealing with change control issues, it should be noted, any changes to the hardware, software, and/or firmware components of the information system and/or application can potentially have significant effects on the overall security of the system.
 
@@ -2004,25 +2040,6 @@ This focuses on external tools for log maintenance and review.  Other STIG requi
       <RawString>In Windows, review the access permissions to tools used to view or modify audit log data (to include traces used for audit purposes).
 
 If appropriate permissions and access controls to prevent unauthorized changes are not applied to these tools, this is a finding.</RawString>
-    </Rule>
-    <Rule id="V-67805" severity="medium" conversionstatus="fail" title="SRG-APP-000123-DB-000204" dscresource="None">
-      <AccessControlEntry />
-      <Description>&lt;VulnDiscussion&gt;Protecting audit data also includes identifying and protecting the tools used to view and manipulate log data. Therefore, protecting audit tools is necessary to prevent unauthorized operation on audit data.
-
-Applications providing tools to interface with audit data will leverage user permissions and roles identifying the user accessing the tools and the corresponding rights the user enjoys in order make access decisions regarding the deletion of audit tools.
-
-Audit tools include, but are not limited to, vendor-provided and open source audit tools needed to successfully view and manipulate audit information system activity and records. Audit tools include custom queries and report generators.
-
-This focuses on external tools for log maintenance and review.  Other STIG requirements govern SQL Server privileges to maintain trace or audit definitions.&lt;/VulnDiscussion&gt;&lt;FalsePositives&gt;&lt;/FalsePositives&gt;&lt;FalseNegatives&gt;&lt;/FalseNegatives&gt;&lt;Documentable&gt;false&lt;/Documentable&gt;&lt;Mitigations&gt;&lt;/Mitigations&gt;&lt;SeverityOverrideGuidance&gt;&lt;/SeverityOverrideGuidance&gt;&lt;PotentialImpacts&gt;&lt;/PotentialImpacts&gt;&lt;ThirdPartyTools&gt;&lt;/ThirdPartyTools&gt;&lt;MitigationControl&gt;&lt;/MitigationControl&gt;&lt;Responsibility&gt;&lt;/Responsibility&gt;&lt;IAControls&gt;&lt;/IAControls&gt;</Description>
-      <DuplicateOf>V-67761</DuplicateOf>
-      <Force>True</Force>
-      <IsNullOrEmpty>False</IsNullOrEmpty>
-      <OrganizationValueRequired>False</OrganizationValueRequired>
-      <OrganizationValueTestString />
-      <Path />
-      <RawString>In Windows, review the access permissions to tools used to view or modify audit log data (to include traces used for audit purposes).
-
-If appropriate permissions and access controls to prevent unauthorized deletions are not applied to these tools, this is a finding.</RawString>
     </Rule>
     <Rule id="V-67805" severity="medium" conversionstatus="fail" title="SRG-APP-000123-DB-000204" dscresource="None">
       <AccessControlEntry />

@@ -471,7 +471,7 @@ function Get-AuditSetScript
     $sqlScript += 'IF EXISTS (SELECT 1 FROM sys.server_audit_specifications WHERE name = ''STIG_AUDIT_SERVER_SPECIFICATION'') DROP SERVER AUDIT SPECIFICATION STIG_AUDIT_SERVER_SPECIFICATION; '
     $sqlScript += 'IF EXISTS (SELECT 1 FROM sys.server_audits WHERE name = ''STIG_AUDIT'') ALTER SERVER AUDIT STIG_AUDIT WITH (STATE = OFF); '
     $sqlScript += 'IF EXISTS (SELECT 1 FROM sys.server_audits WHERE name = ''STIG_AUDIT'') DROP SERVER AUDIT STIG_AUDIT; '
-    $sqlScript += 'CREATE SERVER AUDIT STIG_AUDIT TO FILE (FILEPATH = ''C:\Audits'', MAXSIZE = 200MB, MAX_ROLLOVER_FILES = 50, RESERVE_DISK_SPACE = OFF) WITH (QUEUE_DELAY = 1000, ON_FAILURE = SHUTDOWN) '
+    $sqlScript += 'CREATE SERVER AUDIT STIG_AUDIT TO FILE (FILEPATH = N''`$(auditPath)'', MAXSIZE = 200MB, MAX_ROLLOVER_FILES = 50, RESERVE_DISK_SPACE = OFF) WITH (QUEUE_DELAY = 1000, ON_FAILURE = SHUTDOWN) '
     $sqlScript += 'IF EXISTS (SELECT 1 FROM sys.server_audits WHERE name = ''STIG_AUDIT'') ALTER SERVER AUDIT STIG_AUDIT WITH (STATE = ON); '
     $sqlScript += 'CREATE SERVER AUDIT SPECIFICATION STIG_AUDIT_SERVER_SPECIFICATION FOR SERVER AUDIT STIG_AUDIT '
     $sqlScript += 'ADD (APPLICATION_ROLE_CHANGE_PASSWORD_GROUP), ADD (AUDIT_CHANGE_GROUP), ADD (BACKUP_RESTORE_GROUP), ADD (DATABASE_CHANGE_GROUP), ADD (DATABASE_OBJECT_CHANGE_GROUP), ADD (DATABASE_OBJECT_OWNERSHIP_CHANGE_GROUP), ADD (DATABASE_OBJECT_PERMISSION_CHANGE_GROUP), '
@@ -479,7 +479,6 @@ function Get-AuditSetScript
     $sqlScript += 'ADD (DBCC_GROUP), ADD (FAILED_LOGIN_GROUP), ADD (LOGIN_CHANGE_PASSWORD_GROUP), ADD (LOGOUT_GROUP), ADD (SCHEMA_OBJECT_CHANGE_GROUP), ADD (SCHEMA_OBJECT_OWNERSHIP_CHANGE_GROUP), ADD (SCHEMA_OBJECT_PERMISSION_CHANGE_GROUP), '
     $sqlScript += 'ADD (SERVER_OBJECT_CHANGE_GROUP), ADD (SERVER_OBJECT_OWNERSHIP_CHANGE_GROUP), ADD (SERVER_OBJECT_PERMISSION_CHANGE_GROUP), ADD (SERVER_OPERATION_GROUP), ADD (SERVER_PERMISSION_CHANGE_GROUP), ADD (SERVER_PRINCIPAL_CHANGE_GROUP), ADD (SERVER_PRINCIPAL_IMPERSONATION_GROUP), '
     $sqlScript += 'ADD (SERVER_ROLE_MEMBER_CHANGE_GROUP), ADD (SERVER_STATE_CHANGE_GROUP), ADD (SUCCESSFUL_LOGIN_GROUP), ADD (TRACE_CHANGE_GROUP) WITH (STATE = ON); '
-    $sqlScript += 'GO '
 
     return $sqlScript
 }
@@ -522,6 +521,24 @@ function Get-AuditEvents
     # Return an array of found SQL audit events
     return $collection
 }
+
+<#
+    .SYNOPSIS
+        Return the string used to translate varaibles into the SqlQueryScript
+#>
+function Get-AuditVariable
+{
+    [CmdletBinding()]
+    [OutputType([string])]
+    param
+    ()
+
+    $return = "auditPath={0}"
+
+    return $return
+}
+
+
 #endregion Audit Functions
 
 #region PlainSQL Functions
@@ -996,7 +1013,6 @@ function Get-TraceFileLimitSetScript
     $setScript += "    @maxsize, "
     $setScript += "    NULL, "
     $setScript += "    @maxRolloverFiles "
-    #$setScript += "    GO"
 
     return $setScript
 }
@@ -1740,7 +1756,7 @@ function Get-SqlRuleType
 
 <#
     .SYNOPSIS
-        Determines if a SQL rule requires a variable to 
+        Determines if a SQL rule requires a variable to be pulled from organizational settings
 #>
 function Test-VariableRequired
 {
@@ -1759,6 +1775,10 @@ function Test-VariableRequired
         'V-41022'
         'V-41251'
         'V-41407'
+        'V-79239'
+        'V-79259.b'
+        'V-79287'
+        'V-79291'
     )
 
     return ($Rule -in $requiresVariableList)

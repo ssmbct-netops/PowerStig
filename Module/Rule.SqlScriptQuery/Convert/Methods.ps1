@@ -1446,7 +1446,7 @@ function Get-ChangeDatabaseOwnerVariable
         Returns all queries found withing the 'CheckContent'
 
     .DESCRIPTION
-        This function parses the 'CheckContent' to find all queies and extract them
+        This function parses the 'CheckContent' to find all queries and extract them
         Not all queries may be used by later functions and will be separated then.
         Some functions require variations of the queries returned thus the reason for
         returning all queries found.

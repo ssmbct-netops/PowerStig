@@ -2,7 +2,6 @@
 # Licensed under the MIT License.
 using module .\..\..\Common\Common.psm1
 using module .\..\SharePointRule.psm1
-#using module .\..\SharePointRule.Convert.psm1
 
 
 $exclude = @($MyInvocation.MyCommand.Name,'Template.*.txt')
@@ -16,8 +15,7 @@ foreach ($supportFile in $supportFileList)
 
 <#
     .SYNOPSIS
-        Convert the contents of an xccdf check-content element into an IIS
-        Logging object
+        Convert the contents of an xccdf check-content element into a SharePointRule object
     .DESCRIPTION
         The SharePointRuleConvert class is used to extract the SharePoint Settings from
         the check-content of the xccdf. Once a STIG rule is identified as an
@@ -36,14 +34,14 @@ Class SharePointRuleConvert : SharePointRule
 
     <#
         .SYNOPSIS
-            Converts a xccdf stig rule element into a SharePointging Rule
+            Converts a xccdf stig rule element into a SharePoint Rule
         .PARAMETER XccdfRule
             The STIG rule to convert
     #>
     SharePointRuleConvert ([xml.xmlelement] $XccdfRule) : Base ($XccdfRule, $true)
     {
 
-        if ($this.conversionstatus -eq 'pass')
+        <#if ($this.conversionstatus -eq 'pass')
         {
             $this.SetDuplicateRule()
         }
@@ -53,138 +51,126 @@ Class SharePointRuleConvert : SharePointRule
         $this.SetLogPeriod()
         $this.SetLogTargetW3C()
         $this.SetStatus()
+        $this.SetDscResource()#>
+
+        $ruleType = $this.GetRuleType($this.splitCheckContent)
+        $fixText = [SharePointRule]::GetFixText($XccdfRule)
+
+        $this.SetGetScript($ruleType)
+        $this.SetTestScript($ruleType)
+        $this.SetSetScript($ruleType, $fixText)
+        $this.SetVariable($ruleType)
+        $this.SetDuplicateRule()
         $this.SetDscResource()
     }
 
-    <#
+# 
+
+ <#
         .SYNOPSIS
-            Extracts the log custom field from the check-content and sets the value
+            Extracts the get script from the check-content and sets the value
         .DESCRIPTION
-            Gets the log custom field from the xccdf content and sets the value.
-            If the log custom field that is returned is not valid, the parser
-            status is set to fail
-    #>
-    [void] SetLogCustomFields ()
-    {
-        $thisLogCustomField = Get-LogCustomFieldEntry -CheckContent $this.SplitCheckContent
-
-        $this.set_LogCustomFieldEntry($thisLogCustomField)
-    }
-
-    <#
-        .SYNOPSIS
-            Extracts the log flag from the check-content and sets the value
-        .DESCRIPTION
-            Gets the log flag from the xccdf content and sets the value. If the
-            log flag that is returned is not valid, the parser status is set
-            to fail
-    #>
-    [void] SetLogFlags ()
-    {
-        $thisLogFlag = Get-LogFlag -CheckContent $this.SplitCheckContent
-
-        if (-not [String]::IsNullOrEmpty($thisLogFlag))
-        {
-            $this.set_LogFlags($thisLogFlag)
-        }
-    }
-
-    <#
-        .SYNOPSIS
-            Extracts the log format from the check-content and sets the value
-        .DESCRIPTION
-            Gets the log format from the xccdf content and sets the value. If the
-            log format that is returned is not valid, the parser status is set
+            Gets the get script from the xccdf content and sets the value. If
+            the script that is returned is not valid, the parser status is set
             to fail.
+        .PARAMETER RuleType
+            The type of rule to get the get script for
     #>
-    [void] SetLogFormat ()
+    [void] SetGetScript ([string] $RuleType)
     {
-        $thisLogFormat = Get-LogFormat -CheckContent $this.SplitCheckContent
+        $thisGetScript = & Get-$($RuleType)GetScript -CheckContent $this.SplitCheckContent
 
-        if (-not [String]::IsNullOrEmpty($thisLogFormat))
+        if (-not $this.SetStatus($thisGetScript))
         {
-            $this.set_LogFormat($thisLogFormat)
+            $this.set_GetScript($thisGetScript)
         }
     }
 
     <#
         .SYNOPSIS
-            Extracts the log period from the check-content and sets the value
+            Extracts the test script from the check-content and sets the value
         .DESCRIPTION
-            Gets the log period from the xccdf content and sets the value. If the
-            log period that is returned is not valid, the parser status is set
+            Gets the test script from the xccdf content and sets the value. If
+            the script that is returned is not valid, the parser status is set
             to fail.
+        .PARAMETER RuleType
+            The type of rule to get the test script for
     #>
-    [void] SetLogPeriod ()
+    [void] SetTestScript ($RuleType)
     {
-        $thisLogPeriod = Get-LogPeriod -CheckContent $this.SplitCheckContent
+        $thisTestScript = & Get-$($RuleType)TestScript -CheckContent $this.SplitCheckContent
 
-        if (-not [String]::IsNullOrEmpty($thisLogPeriod))
+        if (-not $this.SetStatus($thisTestScript))
         {
-            $this.set_LogPeriod($thisLogPeriod)
+            $this.set_TestScript($thisTestScript)
         }
     }
 
     <#
         .SYNOPSIS
-            Extracts the log target from the check-content and sets the value
+            Extracts the set script from the check-content and sets the value
         .DESCRIPTION
-            Gets the log target from the xccdf content and sets the value. If the
-            log target that is returned is not valid, the parser status is set
+            Gets the set script from the xccdf content and sets the value. If
+            the script that is returned is not valid, the parser status is set
             to fail.
+        .PARAMETER RuleType
+            The type of rule to get the set script for
+        .PARAMETER FixText
+            The set script to run
     #>
-    [void] SetLogTargetW3C ()
+    [void] SetSetScript ([string] $RuleType, [string[]] $FixText)
     {
-        $thisLogTargetW3C = Get-LogTargetW3C -CheckContent $this.SplitCheckContent
+        $checkContent = $this.SplitCheckContent
 
-        if (-not [String]::IsNullOrEmpty($thisLogTargetW3C))
+        $thisSetScript = & Get-$($RuleType)SetScript -FixText $FixText -CheckContent $checkContent
+
+        if (-not $this.SetStatus($thisSetScript))
         {
-            $this.set_LogTargetW3C($thisLogTargetW3C)
+            $this.set_SetScript($thisSetScript)
         }
     }
 
     <#
         .SYNOPSIS
-            Validates the parsed data and sets the parser status
+            Extracts the variable
         .DESCRIPTION
-            Compares the created rule object against and base stig object to
-            make sure that all of the properties have be set to valid values.
+            Gets the variable string to be used in the SharePoint resource
+        .PARAMETER RuleType
+            The type of rule to get the variable string for.
     #>
-    [void] SetStatus ()
+
+    [void] SetVariable ([string] $RuleType)
     {
-        $baseRule = $this.GetType().BaseType.BaseType::New()
-        $referenceProperties = ($baseRule | Get-Member -MemberType Property).Name
-        $differenceProperties = ($this | Get-Member -MemberType Property).Name
-        $propertyList = (Compare-Object -ReferenceObject $referenceProperties -DifferenceObject $differenceProperties).InputObject
-
-        $status = $false
-
-        foreach ($property in $propertyList)
+        if (Test-VariableRequired -Rule $this.id)
         {
-            if ($null -ne $this.$property)
-            {
-                $status = $true
-            }
-        }
+            $thisVariable = & Get-$($RuleType)Variable
+            $this.set_Variable($thisVariable)
 
-        if (-not $status)
-        {
-            $this.conversionstatus = [status]::fail
+            # If a SharePointRule has a value in the variable property then it requires an OrgValue
+            $this.Set_OrganizationValueRequired($true)
         }
+    }
+
+    <#
+        .SYNOPSIS
+            Extracts the rule type from the check-content and sets the value
+        .DESCRIPTION
+            Gets the rule type from the xccdf content and sets the value
+        .PARAMETER CheckContent
+            The rule text from the check-content element in the xccdf
+    #>
+    [string] GetRuleType ([string[]] $CheckContent)
+    {
+        $ruleType = Get-SharePointRuleType -CheckContent $CheckContent
+
+        return $ruleType
     }
 
     hidden [void] SetDscResource ()
     {
         if($null -eq $this.DuplicateOf)
         {
-            if ($global:stigTitle -match "Server")
-            {
-                $this.DscResource = 'SharePointDsc'
-            }
-            else
-            {
-                $this.DscResource = 'XWebsite'
-            }
+            $this.DscResource = 'SharePoint'
         }
         else
         {
@@ -194,14 +180,26 @@ Class SharePointRuleConvert : SharePointRule
 
     static [bool] Match ([string] $CheckContent)
     {
+        <# 
+            Provide match criteria to validate that the rule is (or is not) a SharePoint rule.
+            Standard match rules
+        #>
         if
         (
-            $CheckContent -Match 'SharePoint'
+            $CheckContent -Match "WSS_ADMIN_WPG" -or
+            $CheckContent -Match 'least privilege' -or
+            $CheckContent -Match "site collection audit settings" -or
+            $CheckContent -Match "configure information rights management" -and
+            $CheckContent -Match "Do not use IRM" -or
+            $CheckContent -Match "Anti-virus"
         )
         {
             return $true
         }
         return $false
     }
+
     #endregion
 }
+
+

@@ -27,7 +27,7 @@ foreach ($target in $mitigationTargets)
 
     $enableValue = $enableValue.split(',')
 
-    ProcessMitigation "$Target-$idValue"
+    ProcessMitigation (Get-ResourceTitle -Rule $rule)
     {
         MitigationTarget = $target
         Enable           = $enableValue

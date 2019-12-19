@@ -471,7 +471,7 @@ function Get-AuditSetScript
     $sqlScript += 'IF EXISTS (SELECT 1 FROM sys.server_audit_specifications WHERE name = ''STIG_AUDIT_SERVER_SPECIFICATION'') DROP SERVER AUDIT SPECIFICATION STIG_AUDIT_SERVER_SPECIFICATION; '
     $sqlScript += 'IF EXISTS (SELECT 1 FROM sys.server_audits WHERE name = ''STIG_AUDIT'') ALTER SERVER AUDIT STIG_AUDIT WITH (STATE = OFF); '
     $sqlScript += 'IF EXISTS (SELECT 1 FROM sys.server_audits WHERE name = ''STIG_AUDIT'') DROP SERVER AUDIT STIG_AUDIT; '
-    $sqlScript += 'CREATE SERVER AUDIT STIG_AUDIT TO FILE (FILEPATH = N''`$(auditPath)'', MAXSIZE = 200MB, MAX_ROLLOVER_FILES = 50, RESERVE_DISK_SPACE = OFF) WITH (QUEUE_DELAY = 1000, ON_FAILURE = SHUTDOWN) '
+    $sqlScript += 'CREATE SERVER AUDIT STIG_AUDIT TO FILE (FILEPATH = ''($auditPath)'', MAXSIZE = 200MB, MAX_ROLLOVER_FILES = 50, RESERVE_DISK_SPACE = OFF) WITH (QUEUE_DELAY = 1000, ON_FAILURE = SHUTDOWN) '
     $sqlScript += 'IF EXISTS (SELECT 1 FROM sys.server_audits WHERE name = ''STIG_AUDIT'') ALTER SERVER AUDIT STIG_AUDIT WITH (STATE = ON); '
     $sqlScript += 'CREATE SERVER AUDIT SPECIFICATION STIG_AUDIT_SERVER_SPECIFICATION FOR SERVER AUDIT STIG_AUDIT '
     $sqlScript += 'ADD (APPLICATION_ROLE_CHANGE_PASSWORD_GROUP), ADD (AUDIT_CHANGE_GROUP), ADD (BACKUP_RESTORE_GROUP), ADD (DATABASE_CHANGE_GROUP), ADD (DATABASE_OBJECT_CHANGE_GROUP), ADD (DATABASE_OBJECT_OWNERSHIP_CHANGE_GROUP), ADD (DATABASE_OBJECT_PERMISSION_CHANGE_GROUP), '
@@ -737,6 +737,23 @@ function Get-SysAdminAccountSetScript
 
     return $return
 }
+
+<#
+    .SYNOPSIS
+        Return the string used to translate varaibles into the SqlQueryScript
+#>
+function Get-SysAdminAccountVariable
+{
+    [CmdletBinding()]
+    [OutputType([string])]
+    param
+    ()
+
+    $return = "saAccountName={0}"
+
+    return $return
+}
+
 #endregion SysAdminAccount Functions
 
 #region SaAccountRename Functions
@@ -846,7 +863,7 @@ function Get-SaAccountRenameSetScript
         $CheckContent
     )
 
-    $return = 'alter login sa with name = [$(saAccountName)]'
+    $return = "alter login sa with name = [$($saAccountName)]"
 
     return $return
 }
@@ -1779,6 +1796,8 @@ function Test-VariableRequired
         'V-79259.b'
         'V-79287'
         'V-79291'
+        'V-79317'
+        'V-79319'
     )
 
     return ($Rule -in $requiresVariableList)

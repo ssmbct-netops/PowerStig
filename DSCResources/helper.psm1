@@ -254,6 +254,8 @@ function Format-FireFoxPreference
         Specifies the value of the variable used in the SQL query.
     .PARAMETER Database
         Specifies the name of the database.
+    .EXAMPLE
+        Format-SqlScriptVariable -Variable 'Foo={0};Bas={1};' -VariableValue 'Foo,Bas' -Database 'NorthWinds'
 #>
 function Format-SqlScriptVariable
 {

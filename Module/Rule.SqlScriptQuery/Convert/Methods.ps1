@@ -749,7 +749,7 @@ function Get-SysAdminAccountVariable
     param
     ()
 
-    $return = "saAccountName={0}"
+    $return = "SysAdminAccountName={0}"
 
     return $return
 }
@@ -879,7 +879,7 @@ function Get-SaAccountRenameVariable
     param
     ()
 
-    $return = "saAccountName={0}"
+    $return = "SysAdminAccountName={0}"
 
     return $return
 }

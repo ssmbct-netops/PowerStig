@@ -128,22 +128,6 @@ function Get-DocumentRuleSetScript
 }
 
 #End Document region
-<#
-Function Test-VariableRequired
-{
-    [CmdletBinding()]
-    [OutputType([string])]
-    [CmdletBinding()]
-    param
-    (
-        [Parameter(Mandatory = $false)]
-        [AllowEmptyString()]
-        $Rule
-    )
-
-        return
-}
-#>
 
 #Begin Permissions region
 
@@ -170,7 +154,16 @@ function Get-PermissionGetScript
         $CheckContent
     )
    
-    return
+    $queries = Get-Query -CheckContent $CheckContent
+
+    $return = $queries[0]
+
+    if ($return -notmatch ";$")
+    {
+        $return = $return + ";"
+    }
+
+    return $return
 }
 
 <#
@@ -195,7 +188,16 @@ function Get-PermissionTestScript
         $CheckContent
     )
 
-    return
+    $queries = Get-Query -CheckContent $CheckContent
+
+    $return = $queries[0]
+
+    if ($return -notmatch ";$")
+    {
+        $return = $return + ";"
+    }
+
+    return $return
 }
 
 <#
@@ -228,7 +230,14 @@ function Get-PermissionSetScript
         $CheckContent
     )
 
-    return
+    $permission = ((Get-Query -CheckContent $CheckContent)[0] -split "'")[1] #Get the permission that will be set
+    <#
+        The following lines of code should create variables containing values that change the content from what was returned from the Get block based on the results from the Test block.
+    #>
+
+    
+
+    return $permission
 }
 
 #End Permissions region
@@ -322,3 +331,5 @@ function Test-VariableRequired
 
     return ($Rule -in $requiresVariableList)
 }
+
+#End Helpfer function region

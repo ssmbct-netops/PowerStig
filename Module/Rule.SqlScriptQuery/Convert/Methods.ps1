@@ -370,7 +370,7 @@ function Get-AuditGetScript
     )
 
     $collection = Get-AuditEvents -CheckContent $CheckContent
-    $auditEvents = '(' + ($collection -join '),(') + ')'
+    $auditEvents = '(' + ($collection -join ',') + ')'
 
     $sqlScript = 'USE [master] DECLARE @MissingAuditCount INTEGER DECLARE @server_specification_id INTEGER DECLARE @FoundCompliant INTEGER SET @FoundCompliant = 0 '
     $sqlScript += '/* Create a table for the events that we are looking for */ '
@@ -414,7 +414,7 @@ function Get-AuditTestScript
     )
 
     $collection = Get-AuditEvents -CheckContent $CheckContent
-    $auditEvents = '(' + ($collection -join '),(') + ')'
+    $auditEvents = '(' + ($collection -join ',') + ')'
 
     $sqlScript = 'USE [master] DECLARE @MissingAuditCount INTEGER DECLARE @server_specification_id INTEGER DECLARE @FoundCompliant INTEGER SET @FoundCompliant = 0 '
     $sqlScript += '/* Create a table for the events that we are looking for */ '
@@ -471,7 +471,7 @@ function Get-AuditSetScript
     $sqlScript += 'IF EXISTS (SELECT 1 FROM sys.server_audit_specifications WHERE name = ''STIG_AUDIT_SERVER_SPECIFICATION'') DROP SERVER AUDIT SPECIFICATION STIG_AUDIT_SERVER_SPECIFICATION; '
     $sqlScript += 'IF EXISTS (SELECT 1 FROM sys.server_audits WHERE name = ''STIG_AUDIT'') ALTER SERVER AUDIT STIG_AUDIT WITH (STATE = OFF); '
     $sqlScript += 'IF EXISTS (SELECT 1 FROM sys.server_audits WHERE name = ''STIG_AUDIT'') DROP SERVER AUDIT STIG_AUDIT; '
-    $sqlScript += 'CREATE SERVER AUDIT STIG_AUDIT TO FILE (FILEPATH = ''($auditPath)'', MAXSIZE = 200MB, MAX_ROLLOVER_FILES = 50, RESERVE_DISK_SPACE = OFF) WITH (QUEUE_DELAY = 1000, ON_FAILURE = SHUTDOWN) '
+    $sqlScript += 'CREATE SERVER AUDIT STIG_AUDIT TO FILE (FILEPATH = ''$(auditPath)'', MAXSIZE = 200MB, MAX_ROLLOVER_FILES = 50, RESERVE_DISK_SPACE = OFF) WITH (QUEUE_DELAY = 1000, ON_FAILURE = SHUTDOWN) '
     $sqlScript += 'IF EXISTS (SELECT 1 FROM sys.server_audits WHERE name = ''STIG_AUDIT'') ALTER SERVER AUDIT STIG_AUDIT WITH (STATE = ON); '
     $sqlScript += 'CREATE SERVER AUDIT SPECIFICATION STIG_AUDIT_SERVER_SPECIFICATION FOR SERVER AUDIT STIG_AUDIT '
     $sqlScript += 'ADD (APPLICATION_ROLE_CHANGE_PASSWORD_GROUP), ADD (AUDIT_CHANGE_GROUP), ADD (BACKUP_RESTORE_GROUP), ADD (DATABASE_CHANGE_GROUP), ADD (DATABASE_OBJECT_CHANGE_GROUP), ADD (DATABASE_OBJECT_OWNERSHIP_CHANGE_GROUP), ADD (DATABASE_OBJECT_PERMISSION_CHANGE_GROUP), '
@@ -480,6 +480,8 @@ function Get-AuditSetScript
     $sqlScript += 'ADD (SERVER_OBJECT_CHANGE_GROUP), ADD (SERVER_OBJECT_OWNERSHIP_CHANGE_GROUP), ADD (SERVER_OBJECT_PERMISSION_CHANGE_GROUP), ADD (SERVER_OPERATION_GROUP), ADD (SERVER_PERMISSION_CHANGE_GROUP), ADD (SERVER_PRINCIPAL_CHANGE_GROUP), ADD (SERVER_PRINCIPAL_IMPERSONATION_GROUP), '
     $sqlScript += 'ADD (SERVER_ROLE_MEMBER_CHANGE_GROUP), ADD (SERVER_STATE_CHANGE_GROUP), ADD (SUCCESSFUL_LOGIN_GROUP), ADD (TRACE_CHANGE_GROUP) WITH (STATE = ON); '
 
+    $this.set_OrganizationValueTestString('valid path for SQL audit storage. Example: F:\Audits')
+    
     return $sqlScript
 }
 
@@ -865,6 +867,8 @@ function Get-SaAccountRenameSetScript
 
     $return = "alter login sa with name = [$($saAccountName)]"
 
+    $this.set_OrganizationValueTestString('valid account name for SA. Note: Cannot be "sa"')
+
     return $return
 }
 
@@ -1031,6 +1035,8 @@ function Get-TraceFileLimitSetScript
     $setScript += "    NULL, "
     $setScript += "    @maxRolloverFiles "
 
+    $this.set_OrganizationValueTestString('valid values for TraceFilePath, MaxRollOverFileCount, MaxTraceFileSize.')
+
     return $setScript
 }
 
@@ -1171,6 +1177,8 @@ function Get-ShutdownOnErrorSetScript
     $setScript += "    @results = @new_trace_id OUTPUT, "
     $setScript += "    @options = 6, "
     $setScript += "    @traceFilePath = N'`$(TraceFilePath)'"
+
+    $this.set_OrganizationValueTestString('valid path for trace file.')
 
     return $setScript
 }
@@ -1322,6 +1330,8 @@ function Get-ViewAnyDatabaseSetScript
 
     $setScript = "REVOKE External access assembly TO '`$(ViewAnyDbUser)'"
 
+    $this.set_OrganizationValueTestString('valid account that has access to view any database.')
+
     return $setScript
 
 }
@@ -1452,6 +1462,8 @@ function Get-ChangeDatabaseOwnerSetScript
     )
 
     $setScript = "ALTER AUTHORIZATION ON DATABASE::`$(Database) to `$(DatabaseOwner)"
+
+    $this.set_OrganizationValueTestString('valid account for database owner.')
 
     return $setScript
 }

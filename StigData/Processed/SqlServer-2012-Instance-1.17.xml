@@ -1,4 +1,4 @@
-<DISASTIG version="1" classification="UNCLASSIFIED" customname="" stigid="Microsoft_SQL_Server_2012_Database_Instance_Security_Technical_Implementation_Guide" description="The Microsoft SQL Server 2012 Database Instance Security Technical Implementation Guide (STIG) is published as a tool to improve the security of Department of Defense (DoD) information systems. Comments or proposed revisions to this document should be sent via e-mail to the following address: disa.stig_spt@mail.mil." filename="U_SQL_Server_2012_Instance_STIG_V1R17_Manual-xccdf.xml" releaseinfo="Release: 17 Benchmark Date: 27 Apr 2018" title="Microsoft SQL Server 2012 Database Instance Security Technical Implementation Guide" notice="terms-of-use" source="STIG.DOD.MIL" fullversion="1.17" created="8/14/2019">
+<DISASTIG version="1" classification="UNCLASSIFIED" customname="" stigid="Microsoft_SQL_Server_2012_Database_Instance_Security_Technical_Implementation_Guide" description="The Microsoft SQL Server 2012 Database Instance Security Technical Implementation Guide (STIG) is published as a tool to improve the security of Department of Defense (DoD) information systems. Comments or proposed revisions to this document should be sent via e-mail to the following address: disa.stig_spt@mail.mil." filename="U_SQL_Server_2012_Instance_STIG_V1R17_Manual-xccdf.xml" releaseinfo="Release: 17 Benchmark Date: 27 Apr 2018" title="Microsoft SQL Server 2012 Database Instance Security Technical Implementation Guide" notice="terms-of-use" source="STIG.DOD.MIL" fullversion="1.17" created="1/8/2020">
   <DocumentRule dscresourcemodule="None">
     <Rule id="V-40907" severity="high" conversionstatus="pass" title="SRG-APP-000264-DB-000136" dscresource="None">
       <Description>&lt;VulnDiscussion&gt;Preventing the disclosure of transmitted information requires that applications take measures to employ some form of cryptographic mechanism in order to protect the information during transmission. This is usually achieved through the use of Transport Layer Security (TLS), VPN, or IPSEC tunnel. 
@@ -4897,7 +4897,7 @@ Note that trace file rollover does not count as an audit failure, provided that 
       <GetScript>SELECT * FROM ::fn_trace_getinfo(NULL)</GetScript>
       <IsNullOrEmpty>False</IsNullOrEmpty>
       <OrganizationValueRequired>True</OrganizationValueRequired>
-      <OrganizationValueTestString />
+      <OrganizationValueTestString>valid path for trace file.</OrganizationValueTestString>
       <RawString>From the query prompt:
 
 SELECT DISTINCT traceid FROM sys.fn_trace_getinfo(0);
@@ -4942,7 +4942,7 @@ After the initial setup of SQL Server audit log configuration, it is best to che
       <GetScript>SELECT * FROM ::fn_trace_getinfo(NULL)</GetScript>
       <IsNullOrEmpty>False</IsNullOrEmpty>
       <OrganizationValueRequired>True</OrganizationValueRequired>
-      <OrganizationValueTestString />
+      <OrganizationValueTestString>valid values for TraceFilePath, MaxRollOverFileCount, MaxTraceFileSize.</OrganizationValueTestString>
       <RawString>Check the SQL Server audit setting on the maximum number of files of the trace used for the auditing requirement. 
 
 Select * from sys.traces. Determine the audit being used to fulfill the overall auditing requirement. Examine the max_files and max_size parameters. SQL will overwrite the oldest files when the max_files parameter has been exceeded. Care must be taken to ensure that this does not happen, or data will be lost. 
@@ -5317,15 +5317,15 @@ Since the SQL Server 'sa' is administrative in nature, the compromise of a defau
       <GetScript>SELECT name FROM sys.server_principals WHERE TYPE = 'S' and name not like '%##%'</GetScript>
       <IsNullOrEmpty>False</IsNullOrEmpty>
       <OrganizationValueRequired>True</OrganizationValueRequired>
-      <OrganizationValueTestString />
+      <OrganizationValueTestString>valid account name for SA. Note: Cannot be "sa"</OrganizationValueTestString>
       <RawString>Verify the SQL Server default 'sa' account name has been changed.
 
 Navigate to SQL Server Management Studio &gt;&gt; Object Explorer &gt;&gt; &lt;'SQL Server name'&gt; &gt;&gt; Security &gt;&gt; Logins.
 
 If SQL Server default 'sa' account name is in the 'Logins' list, this is a finding.</RawString>
-      <SetScript>alter login sa with name = [$(saAccountName)]</SetScript>
+      <SetScript>alter login sa with name = []</SetScript>
       <TestScript>SELECT name FROM sys.server_principals WHERE TYPE = 'S' and name = 'sa'</TestScript>
-      <Variable>saAccountName={0}</Variable>
+      <Variable>SysAdminAccountName={0}</Variable>
       <VariableValue />
     </Rule>
     <Rule id="V-41042" severity="medium" conversionstatus="pass" title="SRG-APP-000063-DB-000018" dscresource="None">
@@ -5956,7 +5956,7 @@ The fix for this vulnerability specifies the use of REVOKE.  Be aware that revok
       <GetScript>SELECT who.name AS [Principal Name], who.type_desc AS [Principal Type], who.is_disabled AS [Principal Is Disabled], what.state_desc AS [Permission State], what.permission_name AS [Permission Name] FROM sys.server_permissions what INNER JOIN sys.server_principals who ON who.principal_id = what.grantee_principal_id WHERE what.permission_name = 'View any database' AND who.type_desc = 'SERVER_ROLE' ORDER BY who.name</GetScript>
       <IsNullOrEmpty>False</IsNullOrEmpty>
       <OrganizationValueRequired>True</OrganizationValueRequired>
-      <OrganizationValueTestString />
+      <OrganizationValueTestString>valid account that has access to view any database.</OrganizationValueTestString>
       <RawString>Obtain the list of roles that are authorized for the SQL Server 'View any database' permission and what 'Grant', 'Grant With', and/or 'Deny' privilege is authorized. Obtain the list of roles with that permission by running the following query:
 
 SELECT 

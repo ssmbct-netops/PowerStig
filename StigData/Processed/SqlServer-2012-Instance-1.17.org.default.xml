@@ -8,13 +8,13 @@
 <OrganizationalSettings fullversion="1.17">
   <!-- Ensure -->
   <OrganizationalSetting id="V-40950" Path="" />
-  <!-- Ensure -->
+  <!-- Ensure valid path for trace file.-->
   <OrganizationalSetting id="V-41022" VariableValue="" />
-  <!-- Ensure -->
+  <!-- Ensure valid values for TraceFilePath, MaxRollOverFileCount, MaxTraceFileSize.-->
   <OrganizationalSetting id="V-41024" VariableValue="" />
-  <!-- Ensure -->
+  <!-- Ensure valid account name for SA. Note: Cannot be "sa"-->
   <OrganizationalSetting id="V-41037" VariableValue="" />
-  <!-- Ensure -->
+  <!-- Ensure valid account that has access to view any database.-->
   <OrganizationalSetting id="V-41251" VariableValue="" />
   <!-- Ensure -->
   <OrganizationalSetting id="V-69169" Path="" />

@@ -40,19 +40,6 @@ Class SharePointRuleConvert : SharePointRule
     #>
     SharePointRuleConvert ([xml.xmlelement] $XccdfRule) : Base ($XccdfRule, $true)
     {
-
-        <#if ($this.conversionstatus -eq 'pass')
-        {
-            $this.SetDuplicateRule()
-        }
-        $this.SetLogCustomFields()
-        $this.SetLogFlags()
-        $this.SetLogFormat()
-        $this.SetLogPeriod()
-        $this.SetLogTargetW3C()
-        $this.SetStatus()
-        $this.SetDscResource()#>
-
         $ruleType = $this.GetRuleType($this.splitCheckContent)
         $fixText = [SharePointRule]::GetFixText($XccdfRule)
 
@@ -161,7 +148,7 @@ Class SharePointRuleConvert : SharePointRule
     #>
     [string] GetRuleType ([string[]] $CheckContent)
     {
-        $ruleType = Get-SharePointRuleType -CheckContent $CheckContent
+        $ruleType = Get-SharePointRuleSubType -CheckContent $CheckContent
 
         return $ruleType
     }
@@ -186,12 +173,10 @@ Class SharePointRuleConvert : SharePointRule
         #>
         if
         (
-            $CheckContent -Match "WSS_ADMIN_WPG" -or
-            $CheckContent -Match 'least privilege' -or
-            $CheckContent -Match "site collection audit settings" -or
-            $CheckContent -Match "configure information rights management" -and
-            $CheckContent -Match "Do not use IRM" -or
-            $CheckContent -Match "Anti-virus"
+            $CheckContent -Match "DoDI 8552.01" -or #V-59957
+            $CheckContent -Match "session time-out" -or #V-59919
+            $CheckContent -Match "Unique session IDs" -or #V-59977
+            $CheckContent -Match "MSNBC online gallery" #V-59991
         )
         {
             return $true

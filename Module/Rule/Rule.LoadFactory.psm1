@@ -46,6 +46,7 @@ class LoadFactory
             'RegistryRule'                  {$return = [RegistryRule]::new($Rule)}
             'SecurityOptionRule'            {$return = [SecurityOptionRule]::new($Rule)}
             'ServiceRule'                   {$return = [ServiceRule]::new($Rule)}
+            'SharePointRule'                {$return = [ServiceRule]::new($Rule)}
             'SqlScriptQueryRule'            {$return = [SqlScriptQueryRule]::new($Rule)}
             'UserRightRule'                 {$return = [UserRightRule]::new($Rule)}
             'WebAppPoolRule'                {$return = [WebAppPoolRule]::new($Rule)}

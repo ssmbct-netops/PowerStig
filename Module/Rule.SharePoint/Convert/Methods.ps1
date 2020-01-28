@@ -2,45 +2,6 @@
 # Licensed under the MIT License.
 #region Method Functions
 
-<#
-.SYNOPSIS
-    Returns the log format.
-
-.Parameter CheckContent
-    An array of the raw string data taken from the STIG setting.
-#>
-
-<#
-function Get-LogCustomFieldEntry
-{
-    [CmdletBinding()]
-    [OutputType([object[]])]
-    param
-    (
-        [Parameter(Mandatory = $true)]
-        [psobject]
-        $CheckContent
-    )
-
-    if ($checkContent -match $regularExpression.customFieldSection)
-    {
-        $customFieldEntries = @()
-        [string[]] $customFieldMatch = $checkContent | Select-String -Pattern $regularExpression.customFields -AllMatches
-
-        foreach ($customField in $customFieldMatch)
-        {
-            $customFieldEntry = ($customField -split $regularExpression.customFields).trim()
-            $customFieldEntries += @{
-                SourceType = $customFieldEntry[0] -replace ' ', ''
-                SourceName = $customFieldEntry[1]
-            }
-        }
-    }
-
-    return $customFieldEntries
-}
-#>
-
 #Begin Document region
 
 <#
@@ -263,7 +224,7 @@ function Get-PermissionSetScript
         This is the 'CheckContent' derived from the STIG raw string and holds the query that will be returned
 #>
 
-function Get-SharePointRuleType
+function Get-SharePointRuleSubType
 {
     [CmdletBinding()]
     [OutputType([string])]
@@ -278,23 +239,24 @@ function Get-SharePointRuleType
 
     switch ($content)
     {
-        # Standard permissions parsers
+        
         {
-            $PSItem -Match 'WSS_ADMIN_WPG' -or #V-60391, V-60005
-            $PSItem -Match 'least privilege' -or #V-59997, V-60001
-            $PSItem -Match 'site collection audit settings' #V-59941
+            $PSItem -Match 'DoDI 8552.01' -or #V-59957
+            $PSItem -Match 'session time-out' -or #V-59919
+            $PSItem -Match 'Unique session IDs' -or #V-59977
+            $PSItem -Match 'MSNBC online gallery' #V-59991
         }
         {
-            $ruleType = 'PermissionRule'
+            $ruleType = 'SPWebAppGeneralSettings'
         }
         # information rights management/DocumentRule
         {
-            $PSItem -Match 'configure information rights management' -and
-            $PSItem -Match 'Do not use IRM' -or #V-59947, V-59973, V-59945
-            $PSItem -Match 'Anti-virus' #V-59987, V-60011
+            $PSItem -Match 'AD DS console' -and
+            $PSItem -Match 'WSS_WPG'
+            
         }
         {
-            $ruleType = 'DocumentRule'
+            $ruleType = 'ActiveDirectoryDsc'
         }
                 
         <#

@@ -6,7 +6,7 @@ using module .\..\Rule\Rule.psm1
 
 <#
     .SYNOPSIS
-        An Account Policy Rule object
+        A SharePoint WebAppGeneralSettings Rule object
     .DESCRIPTION
         The SharePointRule class is used to manage SharePoint STIG rule settings.
     .PARAMETER GetScript

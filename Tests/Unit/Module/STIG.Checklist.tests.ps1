@@ -11,6 +11,6 @@ Describe 'New-StigCheckList' {
     }
 
     It 'Should throw if the full path to a ManualCheckFile is not valid' {
-        {New-StigCheckList -ReferenceConfiguration 'test' -XccdfPath 'test' -ManualCheckFile 'broken' -OutputPath 'c:\test\test.ck'} | Should Throw
+        {New-StigCheckList -ReferenceConfiguration 'test' -XccdfPath 'test' -ManualChecklistEntries 'broken' -OutputPath 'c:\test\test.ck'} | Should Throw
     }
 }

@@ -168,6 +168,35 @@ function Get-SLRegistryPath
     }
 }
 #endregion
+<#
+    .SYNOPSIS
+        Extract the registry path from an McaAfee STIG string.
+
+    .PARAMETER CheckContent
+        An array of the raw string data taken from the STIG setting.
+
+#>
+function Get-McAfeeRegistryPath
+{
+    [CmdletBinding()]
+    [OutputType([string])]
+    param
+    (
+        [Parameter(Mandatory = $true)]
+        [psobject]
+        $CheckContent
+    )
+
+    if ($checkContent -match "Software\\McAfee")
+    {
+        [string]$path = "HKLM\Software\Wow6432Node\McAfee\"
+        [string]$mcafeePath = $checkcontent -match 'SystemCore.*$(.*)'
+        $paths = Join-Path -Path $path -ChildPath $mcafeePath
+        Write-Verbose "[$($MyInvocation.MyCommand.Name)] Found registry path : $paths"
+        return $paths
+    }
+}
+
 #region Registry Type
 <#
     .SYNOPSIS
@@ -277,6 +306,18 @@ function Get-RegistryValueTypeFromSLStig
             }
         } # Switch
     } # Foreach
+
+    if($CheckContent -match '\\Software\\McAfee\\')
+    {
+        if($valueName -match '(?=sz)(.*)')
+        {
+            $valueType = 'REG_SZ'
+        }
+        else
+        {
+            $valueType = 'DWORD'
+        }
+    }
 
     if ($valueType)
     {
@@ -434,12 +475,21 @@ function Get-RegistryValueDataFromSingleStig
         $CheckContent
     )
 
-    foreach ($item in $global:SingleLineRegistryValueData.Values)
+    if ($CheckContent -match '\\Software\\McAfee')
     {
-        $value = Get-RegistryValueDataFromSLStig -CheckContent $CheckContent -Hashtable $item
-        if ([String]::IsNullOrEmpty($value) -eq $false)
+        $mcafeeValueData = '(?<=' + $this.ValueName + '\sis\s)(\d)'
+        $value = [regex]::Matches($CheckContent, $mcafeeValueData)
+        return $value.Value
+    }
+    else
+    {
+        foreach ($item in $global:SingleLineRegistryValueData.Values)
         {
-            return $value
+            $value = Get-RegistryValueDataFromSLStig -CheckContent $CheckContent -Hashtable $item
+            if ([String]::IsNullOrEmpty($value) -eq $false)
+            {
+                return $value
+            }
         }
     }
 }

@@ -1,0 +1,29 @@
+<DISASTIG version="5" classification="UNCLASSIFIED" customname="" stigid="McAfee_VirusScan88_Local_Client" description="The McAfee VirusScan 8.8 Local Client STIG is published as a tool to improve the security of Department of Defense (DoD) information systems. The requirements are derived from the NIST 800-53 and related documents. Comments or proposed revisions to this document should be sent via e-mail to the following address: disa.stig_spt@mail.mil." filename="U_McAfee_VirusScan88_Local_Client_STIG_V5R16_Manual-xccdf.xml" releaseinfo="Release: 16 Benchmark Date: 27 Jul 2018" title="McAfee VirusScan 8.8 Local Client STIG" notice="terms-of-use" source="STIG.DOD.MIL" fullversion="5.16" created="3/6/2020">
+  <RegistryRule dscresourcemodule="PSDscResources">
+    <Rule id="V-6597" severity="medium" conversionstatus="fail" title="DTAM036-McAfee VirusScan limit log size email" dscresource="Registry">
+      <Description>&lt;VulnDiscussion&gt;While logging is imperative to forensic analysis, logs could grow to the point of impacting disk space on the system. In order to avoid the risk of logs growing to the size of impacting the operating system, the log size will be restricted. If the data in the log file exceeds the file size set, the oldest 20 percent of the entries are deleted and new data is appended to the file so although the file size is restricted, it must also be large enough to retain forensic value.&lt;/VulnDiscussion&gt;&lt;FalsePositives&gt;&lt;/FalsePositives&gt;&lt;FalseNegatives&gt;&lt;/FalseNegatives&gt;&lt;Documentable&gt;false&lt;/Documentable&gt;&lt;Mitigations&gt;&lt;/Mitigations&gt;&lt;SeverityOverrideGuidance&gt;&lt;/SeverityOverrideGuidance&gt;&lt;PotentialImpacts&gt;&lt;/PotentialImpacts&gt;&lt;ThirdPartyTools&gt;&lt;/ThirdPartyTools&gt;&lt;MitigationControl&gt;&lt;/MitigationControl&gt;&lt;Responsibility&gt;System Administrator&lt;/Responsibility&gt;&lt;IAControls&gt;&lt;/IAControls&gt;</Description>
+      <DuplicateOf />
+      <Ensure>Present</Ensure>
+      <IsNullOrEmpty>False</IsNullOrEmpty>
+      <Key>HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\WindowsFirewall\DomainProfile</Key>
+      <OrganizationValueRequired>False</OrganizationValueRequired>
+      <OrganizationValueTestString />
+      <RawString>Access the local VirusScan console by clicking Start &gt;&gt; All Programs &gt;&gt; McAfee &gt;&gt; VirusScan Console.
+Under the Task column, select the On-Delivery Email Scanner Option, right-click, and select Properties.
+
+Under the Reports tab, locate the "Log file size" label. 
+
+Criteria:  If the "Limit the size of log file" is checked and the "Maximum log file size:" is at least 10MB, this is not a finding. 
+
+On the client machine, use the Windows Registry Editor to navigate to the following key:
+HKLM\Software\McAfee\ (32-bit)
+HKLM\Software\Wow6432Node\McAfee\ (64-bit)
+SystemCore\VSCore\Email Scanner\Outlook\OnDelivery\ReportOptions
+
+Criteria:   If both the value of bLimitSize is 1 and the value of dwMaxLogSizeMB is at least decimal (10), this is not a finding.</RawString>
+      <ValueData>1</ValueData>
+      <ValueName />
+      <ValueType>Dword</ValueType>
+    </Rule>
+  </RegistryRule>
+</DISASTIG>

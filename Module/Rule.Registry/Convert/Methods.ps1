@@ -25,6 +25,10 @@ function Get-RegistryKey
     if (Test-SingleLineRegistryRule -CheckContent $checkContent)
     {
         $result = Get-SingleLineRegistryPath -CheckContent $checkContent
+        if($result -match 'HKEY_LOCAL_MACHINE\\Software\\McAfee\\\s\(32-bit\)|HKLM\\Software\\Wow6432Node\\McAfee\\\s\(64-bit\)')
+        {
+            $result = Get-McAfeeRegistryPath -CheckContent $CheckContent
+        }
         if ($result -match "!")
         {
             $result = $result.Substring(0, $result.IndexOf('!'))
@@ -157,15 +161,29 @@ function Get-RegistryValueType
         $CheckContent
     )
 
-    # The Office format is different to check which way to send the strings.
-    if ( Test-SingleLineStigFormat -CheckContent $checkContent )
+    if($CheckContent -match '\\Software\\McAfee\\')
     {
-        [string] $type = Get-RegistryValueTypeFromSingleLineStig -CheckContent $checkContent
+        if($valueName -match '(?=sz)(.*)')
+        {
+            [string] $type = 'REG_SZ'
+        }
+        else
+        {
+            [string] $type= 'DWORD'
+        }
     }
     else
     {
-        # Get the second index of the list, which should be the data type and remove spaces.
-        [string] $type = Get-RegistryValueTypeFromWindowsStig -CheckContent $checkContent
+        # The Office format is different to check which way to send the strings.
+        if ( Test-SingleLineStigFormat -CheckContent $checkContent )
+        {
+            [string] $type = Get-RegistryValueTypeFromSingleLineStig -CheckContent $checkContent
+        }
+        else
+        {
+            # Get the second index of the list, which should be the data type and remove spaces.
+            [string] $type = Get-RegistryValueTypeFromWindowsStig -CheckContent $checkContent
+        }
     }
 
     [string] $dscRegistryValueType = $dscRegistryValueType.$type
@@ -896,9 +914,15 @@ function Test-MultipleRegistryEntries
     {
         $matches = $checkContent | Select-String -Pattern "(HKLM|HKCU)\\" -AllMatches
 
-        if ($matches.Matches.Count -gt 1 -and $matches -match 'outlook\\security')
+        if ($matches.Matches.Count -gt 1 -and $matches -match 'outlook\\security|software\\mcafee')
         {
-            return $false
+            if($checkContent -match 'bLimitSize')
+            {
+                return $true
+            }
+            else {
+                return $false
+            }
         }
 
         if ( $matches.Matches.Count -gt 1 )
